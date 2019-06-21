@@ -89,6 +89,14 @@ const bird = {
     flap : function(){
 
     },
+    //animation de ailes: si c est la phase de jeux ready les ailes s animent lentement
+    update: function(){
+        this.period = state.current == state.getReady ? 10 : 5;
+        //on increment de 1 la frame a chaque periode
+        this.frame += frame%this.period == 0 ? 1 : 0;
+        //la frame va de 0 a 4 puis revient a 0
+        this.frame = this.frame%this.animation.length;
+    },
 }
 // message ready
 const getReady = {
@@ -137,7 +145,7 @@ function draw(){
 }
 //update
 function update(){
-
+    bird.update();
 }
 //pour recahger le jeux tt les secones loop
 function loop(){
