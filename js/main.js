@@ -1,4 +1,15 @@
-var cvs= document.getElementById('canvas');
-var ctx= cvs.getContext('2d');
-var imageName= new Image();
-imageName.src ="img"
+const cvs= document.getElementById('mycanvas');
+const ctx= cvs.getContext('2d');
+
+function draw(){
+    ctx.fillStyle = "#70c5ce";
+    ctx.fillRect(0, 0, cvs.clientWidth, cvs.height );
+}
+//pour recahger le jeux tt les seocnes
+function loop(){
+
+    draw();
+
+    requestAnimationFrame(loop);
+}
+loop();
