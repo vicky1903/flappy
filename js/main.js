@@ -53,18 +53,25 @@ const bg = {
 }
 //bas du fond
 const fg= {
-    sX:276,
-    sY: 0,
-    w: 224,
-    h: 112,
-    x: 0,
-    y: cvs.height - 112,
+    sX : 276,
+    sY : 0,
+    w : 224,
+    h : 112,
+    x : 0,
+    y : cvs.height - 112,
 
+    dx : 2,
     draw : function(){
         ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y, this.w, this.h);
         // avec un this.w en plus pour doubler l'image
         ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y, this.w, this.h);
-
+    },
+    //mouvement du la partie base du background
+    update: function(){
+        if(state.current == state.game){//mouvement vers la gauche du decor uniquement pendant cette phase
+            // decrement le bas et garde le mouvement jusqu'a revenir a 0 et creer une boucle
+            this.x = (this.x - this.dx)%(this.w/2);
+        }
     }
 }
 //bird
@@ -76,15 +83,15 @@ const bird = {
         {sX: 276, sY : 164},
         {sX: 276, sY : 139},
     ],
-    x : 50,
-    y : 150,
-    w : 34,
-    h : 26,
+    x : 50,//position en x
+    y : 150,//position en y sur le sprite
+    w : 34,//langeur de l'objet
+    h : 26,//hauteur de l'objet
 
     frame : 0,
-    
-    gravity : 0.25,
-    jump : 4.6,
+    radius : 12,
+    gravity : 0.15,
+    jump : 2,
     speed : 0,
     rotation : 0,
 
@@ -131,6 +138,7 @@ const bird = {
             // si la vitesse est superieur au saut, le bird tombe a 90°
             if(this.speed >= this.jump){
                 this.rotation = 90 * degree;
+                this.frame = 1;
             }else{//sinon la rotation du bird est a -25°
                 this.rotation = -25 * degree;
             }
@@ -167,7 +175,60 @@ const gameOver = {
         }
     }
 }
+//tuyaux
+const pipes = {
+    position : [],
+    top : {
+        sX : 553,
+        sY : 0
+    },
+    bottom : {
+        sX : 502,
+        sY : 0
+    },
+    w : 53,
+    h : 400,
+    gap : 85,
+    maxYpos : -150,
+    dx : 2,
 
+    draw : function(){
+        for(let i = 0; i < this.position.length; i++){
+            let p = this.position[i];
+
+            let topYpos = p.y;
+            let bottomYpos = p.y + this.h + this.gap;
+            //tuyau top
+            ctx.drawImage(sprite, this.top.sX, this.top.sY, this.w, this.h, p.x, topYpos, this.w, this.h);
+            //tuyau bottom
+            ctx.drawImage(sprite, this.bottom.sX, this.bottom.sY, this.w, this.h, p.x, bottomYpos, this.w, this.h);
+        }
+    },
+    update: function(){
+        if(state.current != state.game) return;
+
+        if(frames%100 == 0){
+            this.position.push({//affichage des tuyaux de façon aleatoire
+                x : cvs.width,
+                y : this.maxYpos * ( Math.random() + 1)
+            });
+        }
+        for(let i = 0; i < this.position.length; i++){
+            let p = this.position[i];
+
+            p.x -= this.dx;
+            let bottomYpos = p.x + this.h + this.gap;
+
+            //detection de la collision (top)
+            //if()
+
+            //quand les tuyaux sortent du canvas, elle s'effacent
+            if(p.x + this.w <= 0){
+                this.position.shift
+            }
+        } 
+    }
+}
 
 //apel des methodes pour afficher les dessins
 function draw(){
@@ -175,7 +236,7 @@ function draw(){
     ctx.fillRect(0, 0, cvs.width, cvs.height );
 
     bg.draw();
-    // pipes.draw();
+    pipes.draw();
     fg.draw();
     bird.draw();
     getReady.draw();
@@ -185,6 +246,8 @@ function draw(){
 //update
 function update(){
     bird.update();
+    fg.update();
+    pipes.update();
 }
 //pour recahger le jeux tt les secones loop
 function loop(){
