@@ -216,12 +216,19 @@ const pipes = {
         for(let i = 0; i < this.position.length; i++){
             let p = this.position[i];
 
-            p.x -= this.dx;
-            let bottomYpos = p.x + this.h + this.gap;
+
+            let bottomYpos = p.y + this.h + this.gap;
 
             //detection de la collision (top)
-            //if()
-
+            if(bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && bird.y + bird.radius > p.y && bird.y -bird.radius < p.y + this.h){
+                state.current =  state.over;
+            }
+            //collision bottom
+            if(bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && bird.y + bird.radius > bottomYpos && bird.y -bird.radius < bottomYpos + this.h){
+                state.current =  state.over;
+            }
+            //bouge les tuyaus ver la gauche
+            p.x -= this.dx;
             //quand les tuyaux sortent du canvas, elle s'effacent
             if(p.x + this.w <= 0){
                 this.position.shift
