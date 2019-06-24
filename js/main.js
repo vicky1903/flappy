@@ -67,6 +67,7 @@ const fg= {
 }
 //bird
 const bird = {
+    speed : 0,
     animation : [
         {sX: 276, sY : 112},
         {sX: 276, sY : 139},
@@ -80,6 +81,10 @@ const bird = {
 
     frame : 0,
 
+    gravity : 0.25,
+    jump : 4.6,
+
+
     draw : function(){
         let bird = this.animation[this.frame];
          //pour centrer l'oiseau  on soustrait la moitié
@@ -87,15 +92,34 @@ const bird = {
     },
     //flap methode
     flap : function(){
-
+        this.speed = - this.jump;
+        //maintien l'oiseau en l'air au click
     },
     //animation de ailes: si c est la phase de jeux ready les ailes s animent lentement
     update: function(){
         this.period = state.current == state.getReady ? 10 : 5;
         //on increment de 1 la frame a chaque periode
-        this.frame += frame%this.period == 0 ? 1 : 0;
+        this.frame += frames%this.period == 0 ? 1 : 0;
         //la frame va de 0 a 4 puis revient a 0
         this.frame = this.frame%this.animation.length;
+
+        //fait tomber l'oiseau (mouvement vertical)
+        if(state.current == state.getReady){
+            this.y =150;
+        }else{
+            this.speed += this.gravity;
+            this.y += this.speed;
+            //maintien la position si la valeur est > que la hauteur du canvas - la hauteur du sol
+            if(this.y + this.h/2 >= cvs.height-fg.h){
+                this.y = cvs.height - fg.h - this.h/2;
+                //phase courent du jeux
+                if(state.current == state.game){
+                    //phase gameover
+                    state.current = state.over;
+                }
+                
+            }
+        }
     },
 }
 // message ready
