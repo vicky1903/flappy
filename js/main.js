@@ -98,16 +98,16 @@ const bird = {
     draw : function(){
         let bird = this.animation[this.frame];
 
-        ctx.save();
+        ctx.save();//save l' etat initial  du canvas
         ctx.translate(this.x, this.y);//tranpose l'origine du canvas au centre du bird
         ctx.rotate(this.rotation);
          //pour centrer l'oiseau  on soustrait la moitié
         ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, - this.w/2, - this.h/2, this.w, this.h);
 
-        ctx.restore();//save et restaure les etat du canvas
+        ctx.restore();//restaure l'etat initial du canvas
     },
     //flap methode
-    flap : function(){
+    flap: function(){
         //maintien l'oiseau en l'air au click
         this.speed = - this.jump;
     },
@@ -121,7 +121,7 @@ const bird = {
 
         //fait tomber l'oiseau (mouvement vertical)
         if(state.current == state.getReady){
-            this.y =150;//reset la position du brid apres game over
+            this.y = 150;//reset la position du bird apres game over
             this.rotation = 0 * degree;
         }else{
             this.speed += this.gravity;
@@ -236,7 +236,31 @@ const pipes = {
         } 
     }
 }
+//affichage du score
+const score = {
+    best : parseInt(localStorage.getItem("best")) || 0,
+    value : 0,
+    draw : function(){
+        ctx.fillStyle = "#FFF";
+        ctx.strokeStyle = "#000";
 
+        if(state.current == state.game){ 
+            ctx.lineWidth = 2;
+            ctx.font = "35px Teko";//typo et taille
+            ctx.fillText(this.value, cvs.width/2, 50) //position de l'affichage du score centrer et a 50px du top
+            ctx.strokeText(this.value, cvs.width/2, 50)//crée le style contour a la meme position que le texte
+        }else if(state.current == state.over){
+            //valeur du score
+            ctx.font = "25px Teko";//typo et taille pour le score dans l et tabelau game over
+            ctx.fillText(this.value, 225, 205) //position de l'affichage du score dans le cadre gameover
+            ctx.strokeText(this.value, 225, 205)//crée le style contour a la meme position dans le cadre gameover
+            //valeur du meilleur score
+            ctx.font = "25px Teko";//typo et taille
+            ctx.fillText(this.value, 225, 250) //position de l'affichage du score dans le cadre gameover
+            ctx.strokeText(this.value, 225, 250)//crée le style contour a la meme position dans le cadre gameover
+        }
+    }
+}
 //apel des methodes pour afficher les dessins
 function draw(){
     ctx.fillStyle = "#69BDD1";
@@ -248,7 +272,7 @@ function draw(){
     bird.draw();
     getReady.draw();
     gameOver.draw();
-    // score.draw();
+    score.draw();
 }
 //update
 function update(){
