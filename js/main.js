@@ -2,8 +2,10 @@
 const cvs = document.getElementById("Bird");
 const ctx = cvs.getContext("2d");
 
-//jeux contstantes et variables
+//jeux=> contstantes et variables
 let frames = 0;
+//const pour la convertion de degré en radiant
+const degree = Math.PI/180;
 
 // sprite et img
 const sprite = new Image();
@@ -20,7 +22,7 @@ const state = {
 //controles du jeux
 cvs.addEventListener("click", function(evt){
     switch(state.current){
-        //aller au phase de jeux necessaire apres cahque event
+        //aller au phase de jeux necessaire apres chaque event
         case state.getReady :
             state.current = state.game;
             break;
@@ -67,7 +69,7 @@ const fg= {
 }
 //bird
 const bird = {
-    speed : 0,
+    
     animation : [
         {sX: 276, sY : 112},
         {sX: 276, sY : 139},
@@ -80,20 +82,27 @@ const bird = {
     h : 26,
 
     frame : 0,
-
+    
     gravity : 0.25,
     jump : 4.6,
-
+    speed : 0,
+    rotation : 0,
 
     draw : function(){
         let bird = this.animation[this.frame];
+
+        ctx.save();
+        ctx.translate(this.x, this.y);//tranpose l'origine du canvas au centre du bird
+        ctx.rotate(this.rotation);
          //pour centrer l'oiseau  on soustrait la moitié
-        ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, this.x - this.w/2, this.y - this.h/2, this.w, this.h);
+        ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, - this.w/2, - this.h/2, this.w, this.h);
+
+        ctx.restore();//save et restaure les etat du canvas
     },
     //flap methode
     flap : function(){
-        this.speed = - this.jump;
         //maintien l'oiseau en l'air au click
+        this.speed = - this.jump;
     },
     //animation de ailes: si c est la phase de jeux ready les ailes s animent lentement
     update: function(){
@@ -105,19 +114,25 @@ const bird = {
 
         //fait tomber l'oiseau (mouvement vertical)
         if(state.current == state.getReady){
-            this.y =150;
+            this.y =150;//reset la position du brid apres game over
+            this.rotation = 0 * degree;
         }else{
             this.speed += this.gravity;
             this.y += this.speed;
-            //maintien la position si la valeur est > que la hauteur du canvas - la hauteur du sol
+            //maintien la position au dessu du sol si la valeur est > que la hauteur du canvas - la hauteur du sol
             if(this.y + this.h/2 >= cvs.height-fg.h){
                 this.y = cvs.height - fg.h - this.h/2;
                 //phase courent du jeux
                 if(state.current == state.game){
-                    //phase gameover
+                    //phase gameover si tombe affiche message game over
                     state.current = state.over;
-                }
-                
+                }    
+            }
+            // si la vitesse est superieur au saut, le bird tombe a 90°
+            if(this.speed >= this.jump){
+                this.rotation = 90 * degree;
+            }else{//sinon la rotation du bird est a -25°
+                this.rotation = -25 * degree;
             }
         }
     },
@@ -139,9 +154,9 @@ const getReady = {
 // message game over
 const gameOver = {
     sX: 174,
-    sY: 272,
-    w: 250,
-    h: 225,
+    sY: 228,
+    w: 225,
+    h: 202,
     x: cvs.width - 270 - 2,
     y: 110,
 
