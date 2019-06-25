@@ -159,6 +159,9 @@ const bird = {
             }
         }
     },
+    speedReset : function(){
+        this.speed = 0;
+    }
 }
 // message ready
 const getReady = {
@@ -253,6 +256,9 @@ const pipes = {
                 localStorage.setItem("best", score.best); //stockage du meilleur score
             }
         } 
+    },
+    reset : function(){
+        this.position = [];
     }
 }
 //affichage du score
@@ -278,6 +284,9 @@ const score = {
             ctx.fillText(this.best, 225, 250) //position de l'affichage du score dans le cadre gameover
             ctx.strokeText(this.best, 225, 250)//crée le style contour a la meme position dans le cadre gameover
         }
+    },
+    reset : function(){
+        this.value = 0;
     }
 }
 //apel des methodes pour afficher les dessins
