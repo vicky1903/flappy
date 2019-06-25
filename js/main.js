@@ -11,6 +11,23 @@ const degree = Math.PI/180;
 const sprite = new Image();
 sprite.src = "img/sprite.png";
 
+//les sons
+//score
+const score_son = new Audio();
+score_son.src = "audio/sfx_point.wav";
+//mort
+const mort_son = new Audio();
+mort_son.src = "audio/sfx_die.wav";
+//flap
+const flap_son = new Audio();
+flap_son.src = "audio/sfx_flap.wav";
+//coup
+const coup_son = new Audio();
+coup_son.src = "audio/sfx_hit.wav";
+//ailes mouvement
+const swooshing_son = new Audio();
+swooshing_son.src = "audio/sfx_swooshing.wav";
+
 // les phases de jeux
 const state = {
     current : 0,
@@ -31,9 +48,11 @@ cvs.addEventListener("click", function(evt){
         //aller au phase de jeux necessaire apres chaque event
         case state.getReady :
             state.current = state.game;
+            swooshing_son.play();
             break;
         case state.game :
             bird.flap();
+            flap_son.play();
             break;
         case state.over :
             let rect = cvs.getBoundingClientRect();
@@ -148,6 +167,7 @@ const bird = {
                 if(state.current == state.game){
                     //phase gameover si tombe affiche message game over
                     state.current = state.over;
+                    mort_son.play();
                 }    
             }
             // si la vitesse est superieur au saut, le bird tombe a 90°
@@ -236,14 +256,16 @@ const pipes = {
 
 
             let bottomYpos = p.y + this.h + this.gap;
-
+            //collisions
             //detection de la collision (top)
             if(bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && bird.y + bird.radius > p.y && bird.y -bird.radius < p.y + this.h){
                 state.current =  state.over;
+                coup_son.play();
             }
             //collision bottom
             if(bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + this.w && bird.y + bird.radius > bottomYpos && bird.y -bird.radius < bottomYpos + this.h){
                 state.current =  state.over;
+                coup_son.play();
             }
             //bouge les tuyaus ver la gauche
             p.x -= this.dx;
@@ -251,7 +273,7 @@ const pipes = {
             if(p.x + this.w <= 0){
                 this.position.shift();
                 score.value += 1;
-
+                score_son.play();
                 score.best = Math.max(score.value, score.best);
                 localStorage.setItem("best", score.best); //stockage du meilleur score
             }
