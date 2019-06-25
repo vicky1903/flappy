@@ -18,7 +18,13 @@ const state = {
     game : 1,
     over : 2,
 }
-
+//bouton start
+const startBtn = {
+    x : 120,
+    y : 263,
+    w : 83,
+    h : 29
+}
 //controles du jeux
 cvs.addEventListener("click", function(evt){
     switch(state.current){
@@ -30,7 +36,16 @@ cvs.addEventListener("click", function(evt){
             bird.flap();
             break;
         case state.over :
-            state.current = state.getReady;
+            let rect = cvs.getBoundingClientRect();
+            let clickX = evt.clientX - rect.left;
+            let clickY = evt.clientY - rect.top;
+            //verifie qu'on clique sur le bouton start
+            if(clickX >= startBtn.x && clickX <= startBtn.x + startBtn.w && clickY >= startBtn.y && clickY <= startBtn.y + startBtn.h){
+                pipes.reset();
+                bird.speedReset();
+                score.reset();
+                state.current = state.getReady;
+            }
             break;
     }
 });
@@ -231,7 +246,11 @@ const pipes = {
             p.x -= this.dx;
             //quand les tuyaux sortent du canvas, elle s'effacent
             if(p.x + this.w <= 0){
-                this.position.shift
+                this.position.shift();
+                score.value += 1;
+
+                score.best = Math.max(score.value, score.best);
+                localStorage.setItem("best", score.best); //stockage du meilleur score
             }
         } 
     }
@@ -256,8 +275,8 @@ const score = {
             ctx.strokeText(this.value, 225, 205)//crée le style contour a la meme position dans le cadre gameover
             //valeur du meilleur score
             ctx.font = "25px Teko";//typo et taille
-            ctx.fillText(this.value, 225, 250) //position de l'affichage du score dans le cadre gameover
-            ctx.strokeText(this.value, 225, 250)//crée le style contour a la meme position dans le cadre gameover
+            ctx.fillText(this.best, 225, 250) //position de l'affichage du score dans le cadre gameover
+            ctx.strokeText(this.best, 225, 250)//crée le style contour a la meme position dans le cadre gameover
         }
     }
 }
