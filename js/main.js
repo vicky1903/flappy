@@ -35,10 +35,10 @@ const state = {
     game : 1,
     over : 2,
 }
-//bouton start
+//bouton restart
 const startBtn = {
     x : 120,
-    y : 263,
+    y : 270,
     w : 83,
     h : 29
 }
@@ -124,7 +124,7 @@ const bird = {
 
     frame : 0,
     radius : 12,
-    gravity : 0.15,
+    gravity : 0.10,
     jump : 2,
     speed : 0,
     rotation : 0,
@@ -172,7 +172,7 @@ const bird = {
             }
             // si la vitesse est superieur au saut, le bird tombe a 90°
             if(this.speed >= this.jump){
-                this.rotation = 90 * degree;
+                this.rotation = 45 * degree;
                 this.frame = 1;
             }else{//sinon la rotation du bird est a -25°
                 this.rotation = -25 * degree;
